@@ -145,19 +145,19 @@ def updatePickles(userId, imagePaths, lbp_hogs, labels):            #Funkcija zg
     objToFile(modelsFolder+"/labels.pickle",labels)
     return lbp_hogs, labels
 
-userId = "0123"
-conditions = False                                                #Pogoj za izvajanje bo v prihodnosti ALI je uporabnik že zabeležen v sistemu face-recognition prijave, če je, bo ta vrednost false
+userId = "unknown"
+conditions = True                                                #Pogoj za izvajanje bo v prihodnosti ALI je uporabnik že zabeležen v sistemu face-recognition prijave, če je, bo ta vrednost false
 
 if(conditions):
     dirname = os.path.dirname(os.path.abspath(__file__))              #Pridobimo trenutni delovni direktorij
     imagesFolder = os.path.join(dirname,'Images')                     #Dobimo pot do Images mape, tukaj je lahko v prihodnosti več podmap za uporabnike?
     modelsFolder = os.path.join(dirname,'Models')
     imagePaths = list(paths.list_images(imagesFolder))                #Pridobimo poti do vseh slik v en array
-    
+
     lbp_hogs = fileToObj(modelsFolder+"/faces.pickle")                #Preberemo trenutne značilnice iz datoteke faces.pickle
     labels = fileToObj(modelsFolder+"/labels.pickle")                 #Preberemo trenutne labele iz labels.pickle
 
-    lbp_hogs, labels = updatePickles(imagePaths, lbp_hogs, labels)    #Vnesemo novega uporabnika v zbirko značilnic
+    lbp_hogs, labels = updatePickles(userId, imagePaths, lbp_hogs, labels)    #Vnesemo novega uporabnika v zbirko značilnic
 
     #Ker se je v naši množici podatkov pojavila sprememba, moramo zato na novo zgenerirati model nevronskih mrež.
 
