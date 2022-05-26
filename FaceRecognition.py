@@ -2,6 +2,8 @@ import cv2
 import numpy as np
 #from numba import jit
 from matplotlib import pyplot as plt
+from imutils import paths
+import os, sys
 
 def lbp(lbpImage):
     rows, cols = lbpImage.shape
@@ -86,9 +88,3 @@ def HOG(image, N, B, M, gradients, directions):
             output.extend(normalize(concat))            #To združeno tabelo normaliziramo in jo pripišemo v output, kjer nastaja dolga datoteka
     return output
 
-img = cv2.imread("testimage.png")
-
-lbpImage = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-lbpArray = lbp(lbpImage)
-cv2.imshow("Test",lbpArray)
-cv2.waitKey(0)
