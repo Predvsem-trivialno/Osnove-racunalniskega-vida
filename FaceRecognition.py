@@ -69,7 +69,7 @@ def normalize(numbers):
     return new      #Vrnemo posodobljene vrednosti
 
 #N je velikost celice, B je število košev, M je velikost bloka
-def HOG(image, N, B, M, gradients, directions):
+def hog(image, N, B, M, gradients, directions):
     binGap = 180/B
     (height, width) = image.shape
     #0 15 30 45 60 75 90 105 120 135 150 165 - za B = 12
@@ -107,4 +107,22 @@ def HOG(image, N, B, M, gradients, directions):
                     concat.extend(bins[w+subw][h+subh])
             output.extend(normalize(concat))            #To združeno tabelo normaliziramo in jo pripišemo v output, kjer nastaja dolga datoteka
     return output
+
+dirname = os.path.dirname(os.path.abspath(__file__))              #Pridobimo trenutni delovni direktorij
+imagesFolder = os.path.join(dirname,'Images')                     #Dobimo pot do Images mape, tukaj je lahko v prihodnosti več podmap za uporabnike?
+imagePaths = list(paths.list_images(imagesFolder))                #Pridobimo poti do vseh slik v en array
+
+lbp_hogs = []                                                     #Pripravimo array kamor bomo shranili značilnice za učenje modela
+
+for i in imagePaths:
+    img = cv2.imread(i,0)                                           #Preberemo sivinsko sliko
+    img = cv2.resize(img,(300,300),interpolation=cv2.INTER_AREA)  #Resize na 300x300
+    gradients, directions = sobel(img)
+    imgLbp = lbp(img).tolist()
+    imgHog = hog(img,8,12,2,gradients,directions)
+    join = imgLbp+imgHog
+    print("Processed image",i)
+    lbp_hogs.append(join)
+
+print(len(lbp_hogs))
 
