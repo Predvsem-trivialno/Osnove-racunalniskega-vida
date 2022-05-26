@@ -1,9 +1,25 @@
+# Gradivo:
+# https://realpython.com/python-ai-neural-network/
+# https://machinelearningmastery.com/tutorial-first-neural-network-python-keras/
+# https://medium.com/@prantiksen4/training-a-neural-network-with-histogram-of-oriented-gradients-hog-features-373b97be5971
+# https://github.com/pransen/ComputerVisionAlgorithms/blob/master/Principal%20Component%20Analysis/PCA.ipynb
+
+# https://www.astesj.com/publications/ASTESJ_060285.pdf
+
 import cv2
 import numpy as np
-#from numba import jit
 from matplotlib import pyplot as plt
 from imutils import paths
 import os, sys
+import pickle
+
+def objToFile(dir,obj):
+    with open(dir, 'wb') as handle:
+        pickle.dump(obj, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+def fileToObj(dir):
+    with open(dir, 'rb') as handle:
+        return pickle.load(handle)
 
 def lbp(lbpImage):
     rows, cols = lbpImage.shape
@@ -125,4 +141,3 @@ for i in imagePaths:
     lbp_hogs.append(join)
 
 print(len(lbp_hogs))
-
