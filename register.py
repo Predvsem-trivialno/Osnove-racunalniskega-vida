@@ -28,10 +28,6 @@ def fileToObj(dir):
     with open(dir, 'rb') as handle:
         return pickle.load(handle)
 
-
-
-
-
 def updatePickles(userId, imagePaths, lbp_hogs, labels):            #Funkcija zgenerira nove značilnice, če so izpolnjeni pogoji
     for i in imagePaths:
         img = cv2.imread(i,0)                                           #Preberemo sivinsko sliko
