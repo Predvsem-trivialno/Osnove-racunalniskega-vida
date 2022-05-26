@@ -28,6 +28,26 @@ def lbp(lbpImage):
             lbpFinal[i, j] = pValue
     return lbpFinal
 
+def sobel(src):
+    src = cv2.GaussianBlur(src, (3, 3), 0)
+    grad_x = cv2.Sobel(src, cv2.CV_16S, 1, 0, ksize=3, scale=1, delta=0, borderType=cv2.BORDER_DEFAULT)
+    grad_y = cv2.Sobel(src, cv2.CV_16S, 0, 1, ksize=3, scale=1, delta=0, borderType=cv2.BORDER_DEFAULT)
+    abs_grad_x = cv2.convertScaleAbs(grad_x)
+    abs_grad_y = cv2.convertScaleAbs(grad_y)
+    grad = cv2.addWeighted(abs_grad_x, 0.5, abs_grad_y, 0.5, 0)
+    dirs = np.empty_like(grad_x)
+            
+    dirs = np.arctan2(grad_y,grad_x) * 180 / np.pi
+    for i in range(len(dirs)):
+        for j in range(len(dirs[i])):
+            if(dirs[i][j]<0):
+                dirs[i][j]+=180
+            if(dirs[i][j]==180):
+                dirs[i][j]=179
+            dirs[i][j] = int(dirs[i][j])
+
+    return grad.astype(np.uint8), dirs.astype(np.uint8)
+
 def adjustSize(image, N):
     (height, width) = image.shape
     addWidth = (N-(width%N))         #Prilagodimo širino in višino, da lahko dobimo točno prileganje glede na celice.
