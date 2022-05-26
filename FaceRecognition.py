@@ -7,7 +7,7 @@ import os, sys
 
 def lbp(lbpImage):
     rows, cols = lbpImage.shape
-    lbpFinal = np.zeros(shape=(rows, cols))
+    lbpFinal = np.zeros(pow(2, 8))
     lbpFinal = lbpFinal.astype('uint8')
 
     for i in range(1, rows - 1):
@@ -25,7 +25,7 @@ def lbp(lbpImage):
             if(lbpImage[i, j - 1] >= center): lbpArray[7] = 128
             for k in range(0, lbpArray.size):
                 pValue = pValue + lbpArray[k]
-            lbpFinal[i, j] = pValue
+            lbpFinal[pValue] += 1
     return lbpFinal
 
 def sobel(src):
