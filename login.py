@@ -13,8 +13,22 @@ def fileToObj(dir):
     with open(dir, 'rb') as handle:
         return pickle.load(handle)
 
-userId = "0123"
 dirname = os.path.dirname(os.path.abspath(__file__))
 modelsFolder = os.path.join(dirname,'Models')
 
 mlp = fileToObj(modelsFolder+"/model.pickle")
+
+img = cv2.imread("loginAttempt.jpg",0)
+img = cv2.resize(img,(300,300),interpolation=cv2.INTER_AREA)
+
+lbp_hog = []
+
+gradients, directions = sobel(img)
+imgLbp = lbp(img).tolist()
+imgHog = hog(img,8,12,2,gradients,directions)
+join = imgLbp+imgHog
+lbp_hog.append(join)
+
+prediction = mlp.predict_proba(lbp_hog)
+print(mlp.classes_)
+print(prediction)
