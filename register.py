@@ -12,7 +12,7 @@ from matplotlib import pyplot as plt
 from imutils import paths
 import os, sys
 import pickle
-import facerecognitionutility as fr
+from facerecognitionutility import facerecognition as fr
 
 import sklearn
 from sklearn.model_selection import train_test_split
@@ -28,21 +28,19 @@ def fileToObj(dir):
     with open(dir, 'rb') as handle:
         return pickle.load(handle)
 
-
-
-
-
 def updatePickles(userId, imagePaths, lbp_hogs, labels):            #Funkcija zgenerira nove značilnice, če so izpolnjeni pogoji
     for i in imagePaths:
         img = cv2.imread(i,0)                                           #Preberemo sivinsko sliko
         img = cv2.resize(img,(300,300),interpolation=cv2.INTER_AREA)    #Resize na 300x300
-        gradients, directions = sobel(img)
-        imgLbp = lbp(img).tolist()
-        imgHog = hog(img,8,12,2,gradients,directions)
+        gradients, directions = fr.sobel(img)
+        imgLbp = fr.lbp(img).tolist()
+        imgHog = fr.hog(img,8,12,2,gradients,directions)
         join = imgLbp+imgHog
         print("Processed image",i)
         lbp_hogs.append(join)
         labels.append(userId)
+    print(len(lbp_hogs))
+    print(len(labels))
     objToFile(modelsFolder+"/faces.pickle",lbp_hogs)
     objToFile(modelsFolder+"/labels.pickle",labels)
     return lbp_hogs, labels
