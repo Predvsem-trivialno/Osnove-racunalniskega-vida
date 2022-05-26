@@ -4,6 +4,7 @@ from matplotlib import pyplot as plt
 from imutils import paths
 import os, sys
 import pickle
+import facerecognitionutility as fr
 
 def objToFile(dir,obj):
     with open(dir, 'wb') as handle:
