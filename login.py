@@ -18,7 +18,7 @@ dirname = os.path.dirname(os.path.abspath(__file__))
 modelsFolder = os.path.join(dirname,'Models')
 
 mlp = fileToObj(modelsFolder+"/model.pickle")
-img = cv2.imread("loginAttempt.jpg",0)
+img = cv2.imread("nik_test.jpg",0)
 img = cv2.resize(img,(300,300),interpolation=cv2.INTER_AREA)
 
 lbp_hog = []

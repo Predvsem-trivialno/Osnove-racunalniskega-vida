@@ -45,7 +45,7 @@ def updatePickles(userId, imagePaths, lbp_hogs, labels):            #Funkcija zg
     objToFile(modelsFolder+"/labels.pickle",labels)
     return lbp_hogs, labels
 
-userId = "unknown"
+userId = "nik"
 conditions = True                                                #Pogoj za izvajanje bo v prihodnosti ALI je uporabnik že zabeležen v sistemu face-recognition prijave, če je, bo ta vrednost false
 
 if(conditions):
