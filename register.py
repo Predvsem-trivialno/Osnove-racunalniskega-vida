@@ -31,7 +31,7 @@ def fileToObj(dir):
 def updatePickles(userId, imagePaths, lbp_hogs, labels):            #Funkcija zgenerira nove značilnice, če so izpolnjeni pogoji
     for i in imagePaths:
         img = cv2.imread(i,0)                                           #Preberemo sivinsko sliko
-        img = cv2.resize(img,(300,300),interpolation=cv2.INTER_AREA)    #Resize na 300x300
+        img = fr.getFace(img)
         gradients, directions = fr.sobel(img)
         imgLbp = fr.lbp(img).tolist()
         imgHog = fr.hog(img,8,12,2,gradients,directions)
@@ -46,7 +46,7 @@ def updatePickles(userId, imagePaths, lbp_hogs, labels):            #Funkcija zg
     return lbp_hogs, labels
 
 userId = "nik"
-conditions = True                                                #Pogoj za izvajanje bo v prihodnosti ALI je uporabnik že zabeležen v sistemu face-recognition prijave, če je, bo ta vrednost false
+conditions = False                                                #Pogoj za izvajanje bo v prihodnosti ALI je uporabnik že zabeležen v sistemu face-recognition prijave, če je, bo ta vrednost false
 
 if(conditions):
     dirname = os.path.dirname(os.path.abspath(__file__))              #Pridobimo trenutni delovni direktorij

@@ -105,3 +105,31 @@ class facerecognition:
                         concat.extend(bins[w+subw][h+subh])
                 output.extend(facerecognition.normalize(concat))            #To združeno tabelo normaliziramo in jo pripišemo v output, kjer nastaja dolga datoteka
         return output
+
+    def detectFaces(imageData):
+        net = cv2.dnn.readNetFromCaffe("deploy.prototxt.txt", "res10_300x300_ssd_iter_140000.caffemodel")
+        (h, w) = imageData.shape[:2]
+        blob = cv2.dnn.blobFromImage(cv2.resize(imageData, (300, 300)), 1.0, (300, 300), (104.0, 177.0, 123.0))
+        net.setInput(blob)
+        detections = net.forward()
+        max=0
+        for i in range(0, detections.shape[2]):
+            confidence = detections[0, 0, i, 2]
+            if(confidence<0.75):
+                continue
+            else:
+                if(confidence>max):
+                    max=confidence
+                    box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
+                    (startX, startY, endX, endY) = box.astype("int")
+                    newImg = imageData[startY:endY,startX:endX]
+
+        return newImg
+
+    def getFace(img):
+        img = cv2.imread("mapo1.jpg",3)
+        img = cv2.resize(img,(300,300),interpolation=cv2.INTER_AREA)
+        cropped = facerecognition.detectFaces(img) 
+        cropped = cv2.resize(cropped,(130,140),interpolation=cv2.INTER_AREA)
+        cropped = cv2.cvtColor(cropped, cv2.COLOR_BGR2GRAY)
+        return cropped
