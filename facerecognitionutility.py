@@ -2,6 +2,8 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 
+from sklearn.neural_network import MLPClassifier
+
 class facerecognition:
     def lbp(lbpImage):
         rows, cols = lbpImage.shape
@@ -112,24 +114,58 @@ class facerecognition:
         blob = cv2.dnn.blobFromImage(cv2.resize(imageData, (300, 300)), 1.0, (300, 300), (104.0, 177.0, 123.0))
         net.setInput(blob)
         detections = net.forward()
+        finalDetections = []
         max=0
+        newImg = imageData
         for i in range(0, detections.shape[2]):
             confidence = detections[0, 0, i, 2]
             if(confidence<0.75):
                 continue
             else:
+                finalDetections.append(str(confidence))
                 if(confidence>max):
                     max=confidence
                     box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
                     (startX, startY, endX, endY) = box.astype("int")
-                    newImg = imageData[startY:endY,startX:endX]
-
-        return newImg
+                    newImg = imageData[startY+1:endY-1,startX+1:endX-1]
+        if(newImg.shape[0]==0 and newImg.shape[1]==0):
+            return imageData
+        else:
+            return newImg
 
     def getFace(img):
-        img = cv2.imread("mapo1.jpg",3)
         img = cv2.resize(img,(300,300),interpolation=cv2.INTER_AREA)
         cropped = facerecognition.detectFaces(img) 
+        #print(cropped.shape)
         cropped = cv2.resize(cropped,(130,140),interpolation=cv2.INTER_AREA)
         cropped = cv2.cvtColor(cropped, cv2.COLOR_BGR2GRAY)
+        #cv2.imshow("hi",cropped)
+        #cv2.waitKey(0)
         return cropped
+
+
+###---ISKANJE OPTIMALNIHH HIPERPARAMETROV IN REZULTATI:---
+
+#Best parameters found:
+# {'activation': 'tanh', 'alpha': 0.0001, 'hidden_layer_sizes': (100,), 'learning_rate': 'constant', 'solver': 'adam'}
+
+    def findHiperParams(lbp_hogs,labels):
+        mlp = MLPClassifier(max_iter=1000)
+        parameter_space = {
+            'hidden_layer_sizes': [(50,50,50), (50,100,50), (100,)],
+            'activation': ['tanh', 'relu'],
+            'solver': ['sgd', 'adam'],
+            'alpha': [0.0001, 0.05],
+            'learning_rate': ['constant','adaptive'],
+        }
+        from sklearn.model_selection import GridSearchCV
+        clf = GridSearchCV(mlp, parameter_space, n_jobs=-1, cv=3)
+        clf.fit(lbp_hogs, labels)
+        # Best paramete set
+        print('Best parameters found:\n', clf.best_params_)
+
+        # All results
+        means = clf.cv_results_['mean_test_score']
+        stds = clf.cv_results_['std_test_score']
+        for mean, std, params in zip(means, stds, clf.cv_results_['params']):
+            print("%0.3f (+/-%0.03f) for %r" % (mean, std * 2, params))

@@ -15,7 +15,7 @@ import pickle
 from facerecognitionutility import facerecognition as fr
 
 import sklearn
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import RandomizedSearchCV, train_test_split
 from sklearn.metrics import classification_report,confusion_matrix
 from sklearn.neural_network import MLPClassifier
 from sklearn.neural_network import MLPRegressor
@@ -30,8 +30,9 @@ def fileToObj(dir):
 
 def updatePickles(userId, imagePaths, lbp_hogs, labels):            #Funkcija zgenerira nove značilnice, če so izpolnjeni pogoji
     for i in imagePaths:
-        img = cv2.imread(i,0)                                           #Preberemo sivinsko sliko
+        img = cv2.imread(i)                                         #Preberemo sliko
         img = fr.getFace(img)
+        #img = cv2.resize(img,(300,300),interpolation=cv2.INTER_AREA)
         gradients, directions = fr.sobel(img)
         imgLbp = fr.lbp(img).tolist()
         imgHog = fr.hog(img,8,12,2,gradients,directions)
@@ -41,12 +42,13 @@ def updatePickles(userId, imagePaths, lbp_hogs, labels):            #Funkcija zg
         labels.append(userId)
     print(len(lbp_hogs))
     print(len(labels))
+    print("Added",userId)
     objToFile(modelsFolder+"/faces.pickle",lbp_hogs)
     objToFile(modelsFolder+"/labels.pickle",labels)
     return lbp_hogs, labels
 
-userId = "nik"
-conditions = False                                                #Pogoj za izvajanje bo v prihodnosti ALI je uporabnik že zabeležen v sistemu face-recognition prijave, če je, bo ta vrednost false
+userId = "lara"
+conditions = True                                                #Pogoj za izvajanje bo v prihodnosti ALI je uporabnik že zabeležen v sistemu face-recognition prijave, če je, bo ta vrednost false
 
 if(conditions):
     dirname = os.path.dirname(os.path.abspath(__file__))              #Pridobimo trenutni delovni direktorij
@@ -63,7 +65,8 @@ if(conditions):
 
     #X_train, X_test, y_train, y_test = train_test_split(lbp_hogs, labels, test_size=0.20, random_state=42)      #Značilnice razdelimo na učno in testno množico
 
-    mlp = MLPClassifier(hidden_layer_sizes=(8,8,8), activation='relu', solver='adam', max_iter=500)             #Pripravimo Multi-Layer Perception Classifier
+    mlp = MLPClassifier(hidden_layer_sizes=(100,), activation='tanh', solver='adam', learning_rate='constant', max_iter=1000)             #Pripravimo Multi-Layer Perception Classifier
+
     mlp.fit(lbp_hogs,labels)
     objToFile(modelsFolder+"/model.pickle", mlp)                      #Shranimo zgeneriran model v datoteko model.pickle
 else:
