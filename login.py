@@ -19,7 +19,7 @@ dirname = os.path.dirname(os.path.abspath(__file__))
 modelsFolder = os.path.join(dirname,'Models')
 
 mlp = fileToObj(modelsFolder+"/model.pickle")
-img = cv2.imread('test2.jpeg')
+img = fr.decodeString(sys.argv[0])
 img = fr.getFace(img)
 
 lbp_hog = []

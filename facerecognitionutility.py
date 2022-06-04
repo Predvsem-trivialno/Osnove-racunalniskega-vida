@@ -139,9 +139,14 @@ class facerecognition:
         #print(cropped.shape)
         cropped = cv2.resize(cropped,(130,140),interpolation=cv2.INTER_AREA)
         cropped = cv2.cvtColor(cropped, cv2.COLOR_BGR2GRAY)
-        #cv2.imshow("hi",cropped)
-        #cv2.waitKey(0)
+        cv2.imshow("hi",cropped)
+        cv2.waitKey(0)
         return cropped
+
+    def decodeString(encoded_data):
+        nparr = np.fromstring(encoded_data.decode('base64'), np.uint8)
+        img = cv2.imdecode(nparr, cv2.IMREAD_ANYCOLOR)
+        return img
 
 
 ###---ISKANJE OPTIMALNIHH HIPERPARAMETROV IN REZULTATI:---
